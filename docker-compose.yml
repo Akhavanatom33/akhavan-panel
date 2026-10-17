@@ -1,0 +1,37 @@
+# Choose ONE backend (both are equivalent and share the same data folder):
+#   docker compose --profile node   up -d --build
+#   docker compose --profile python up -d --build
+# ./install.sh does this for you.
+#
+# network_mode: host  ->  servers you add from the panel (any port) work immediately,
+# without editing this file.
+x-panel: &panel
+  restart: unless-stopped
+  network_mode: host
+  env_file:
+    - path: .env
+      required: false
+  volumes:
+    - ./data:/data
+  cap_drop: [ALL]
+  cap_add: [NET_BIND_SERVICE]
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  panel-node:
+    <<: *panel
+    profiles: ["node"]
+    image: akhavan-panel:node
+    container_name: akhavan-panel
+    build:
+      context: .
+      dockerfile: node/Dockerfile
+  panel-python:
+    <<: *panel
+    profiles: ["python"]
+    image: akhavan-panel:python
+    container_name: akhavan-panel
+    build:
+      context: .
+      dockerfile: python/Dockerfile

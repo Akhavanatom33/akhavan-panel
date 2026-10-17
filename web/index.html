@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Akhavan Panel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ login ============ -->
+<main id="login" class="login hidden">
+  <form id="loginForm" class="card login-card" autocomplete="on">
+    <div class="brand big">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.6a8 8 0 1 0 11.4 0"/></svg>
+      <span class="brand-name">اخوان <b>پنل</b></span>
+    </div>
+    <label class="field"><span>نام کاربری</span><input id="lUser" class="input ltr" name="username" autocomplete="username" required></label>
+    <label class="field"><span>رمز عبور</span><input id="lPass" class="input ltr" name="password" type="password" autocomplete="current-password" required></label>
+    <div id="lErr" class="error" role="alert"></div>
+    <button class="btn primary wide" type="submit">ورود</button>
+  </form>
+</main>
+
+<!-- ============ app ============ -->
+<div id="app" class="app hidden">
+  <header class="top">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.6a8 8 0 1 0 11.4 0"/></svg>
+      <span class="brand-name">اخوان <b>پنل</b></span>
+    </div>
+    <div class="top-right">
+      <span id="xrayPill" class="pill">…</span>
+      <button class="btn small" data-action="logout">خروج</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" role="tab" data-tab="clients">کانفیگ‌ها</button>
+    <button class="tab" role="tab" data-tab="servers">سرورها</button>
+    <button class="tab" role="tab" data-tab="settings">تنظیمات</button>
+    <button class="tab" role="tab" data-tab="logs">وضعیت و گزارش</button>
+  </nav>
+
+  <!-- configs -->
+  <section class="page" id="page-clients">
+    <div class="card add-row">
+      <input id="newClientName" class="input" maxlength="40" placeholder="نام کانفیگ (مثلاً موبایل یا لپ‌تاپ)">
+      <button class="btn primary" data-action="add-client">افزودن کانفیگ</button>
+    </div>
+    <p class="hint">هر کانفیگ برای یک دستگاه است. لینک را کپی کن یا QR را با موبایل اسکن کن؛ در برنامهٔ اخوان VPN، v2rayNG، Hiddify یا Streisand وارد می‌شود. «آدرس اشتراک» همهٔ سرورها را یکجا و به‌روز می‌دهد.</p>
+    <div id="clientList" class="list"></div>
+  </section>
+
+  <!-- servers -->
+  <section class="page hidden" id="page-servers">
+    <div id="serverList" class="list"></div>
+    <div class="card">
+      <h3>افزودن سرور (ورودی Reality)</h3>
+      <p class="hint">هر سرور یک پورت و یک SNI جداست و برای هر کانفیگ یک لینک جدا می‌سازد؛ اگر یکی فیلتر شد، بقیه کار می‌کنند. فایروال VPS یا پنل ارائه‌دهنده باید این پورت (TCP) را باز کند.</p>
+      <div class="grid">
+        <label class="field"><span>نام</span><input id="ibName" class="input" maxlength="40" placeholder="Akhavan-DE"></label>
+        <label class="field"><span>پورت (TCP)</span><input id="ibPort" class="input ltr" inputmode="numeric" placeholder="443"></label>
+        <label class="field"><span>SNI (سایت پوششی)</span>
+          <input id="ibSni" class="input ltr" list="sniPresets" value="www.microsoft.com" spellcheck="false">
+          <datalist id="sniPresets">
+            <option value="www.microsoft.com"><option value="www.cloudflare.com"><option value="www.apple.com">
+            <option value="addons.mozilla.org"><option value="www.speedtest.net"><option value="dl.google.com"><option value="www.lovelive-anime.jp">
+          </datalist>
+        </label>
+        <label class="field"><span>کد کشور (برای پرچم)</span><input id="ibCc" class="input ltr" maxlength="2" placeholder="DE"></label>
+      </div>
+      <div class="row">
+        <button class="btn" data-action="check-dest">تست SNI از سمت سرور</button>
+        <button class="btn primary" data-action="add-inbound">افزودن سرور</button>
+        <span id="destResult" class="hint inline"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>سرورهای دیگر (VPS دیگر)</h3>
+      <p class="hint">لینک سرورهایی که روی VPS دیگری دارید (هر خط یک لینک) را اینجا بگذارید تا به آدرس اشتراک همهٔ کانفیگ‌ها اضافه شود. اینطور چند سرور در چند کشور در یک اشتراک جمع می‌شوند.</p>
+      <textarea id="extraLinks" class="input ltr" rows="4" placeholder="vless://…" spellcheck="false"></textarea>
+      <div class="row"><button class="btn primary" data-action="save-extra">ذخیره</button></div>
+    </div>
+  </section>
+
+  <!-- settings -->
+  <section class="page hidden" id="page-settings">
+    <div class="card">
+      <h3>آدرس سرور</h3>
+      <p class="hint">IP یا دامنه‌ای که کاربران به آن وصل می‌شوند و در همهٔ لینک‌ها نوشته می‌شود.</p>
+      <div class="row"><input id="hostInput" class="input ltr grow" spellcheck="false"><button class="btn primary" data-action="save-host">ذخیره</button></div>
+    </div>
+    <div class="card">
+      <h3>تغییر رمز پنل</h3>
+      <div class="grid">
+        <label class="field"><span>رمز فعلی</span><input id="pwCur" type="password" class="input ltr" autocomplete="current-password"></label>
+        <label class="field"><span>رمز جدید (حداقل ۱۰ نویسه)</span><input id="pwNew" type="password" class="input ltr" autocomplete="new-password"></label>
+      </div>
+      <div class="row"><button class="btn primary" data-action="change-password">تغییر رمز</button></div>
+    </div>
+    <div class="card">
+      <h3>اطلاعات پنل</h3>
+      <dl id="panelInfo" class="info"></dl>
+    </div>
+  </section>
+
+  <!-- logs -->
+  <section class="page hidden" id="page-logs">
+    <div class="card">
+      <div class="row between">
+        <h3>Xray</h3>
+        <div class="row"><button class="btn small" data-action="refresh-logs">تازه‌سازی گزارش</button><button class="btn small" data-action="restart-xray">راه‌اندازی مجدد Xray</button></div>
+      </div>
+      <pre id="logBox" class="log ltr"></pre>
+    </div>
+  </section>
+</div>
+
+<dialog id="dlg"><div id="dlgBody"></div></dialog>
+<div id="toast" class="toast hidden" role="status"></div>
+<script src="vendor/qrcode.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
